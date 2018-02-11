@@ -167,7 +167,7 @@ namespace SafeWordPearlHacks18
 
                     RunOnUiThread(() => textviewRecievedText.Text = statement);
 
-                    if (statement.Contains("test") && isInCall == false)
+                    if (statement.Contains("chicken") && isInCall == false)
                     {
                         isInCall = true;
                         var uri = Android.Net.Uri.Parse("tel:9026709064");

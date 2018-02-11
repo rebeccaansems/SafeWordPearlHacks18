@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvOptionsDistress1" />
     <EditText
+      android:text="chicken"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etOptionsDistressCommand1" />
@@ -19,11 +20,13 @@
         android:id="@+id/tvOptionsDistressNumber1" />
     <EditText
         android:inputType="phone"
+        android:text="9026709064"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etOptionsDistressNumber1" />
     <CheckBox
         android:text="Start Phonecall"
+        android:checked="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/cbPhone1" />
