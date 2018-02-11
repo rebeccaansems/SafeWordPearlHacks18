@@ -51,8 +51,6 @@ namespace SafeWordPearlHacks18
             var startTimeSpan = TimeSpan.Zero;
             var periodTimeSpan = TimeSpan.FromSeconds(10);
 
-            bool cancelTimer = false;
-
             buttonMonitor.Click += delegate
             {
                 buttonMonitor.Enabled = false;
@@ -69,6 +67,8 @@ namespace SafeWordPearlHacks18
 
             optionsButton.Click += (sender, e) =>
             {
+                StopRecording(counter-1);
+
                 var intent = new Intent(this, typeof(Options));
                 StartActivity(intent);
             };
