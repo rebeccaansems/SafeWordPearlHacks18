@@ -16,14 +16,15 @@ using System.IO;
 
 namespace SafeWordPearlHacks18
 {
-    [Activity(Label = "SafeWordPearlHacks18", MainLauncher = true)]
+    [Activity(Label = "Safe Word", MainLauncher = true)]
     public class MainActivity : Activity
     {
         private const int SpeechResult = 5;
 
         MediaRecorder _recorder;
         MediaPlayer _player;
-        Button buttonMonitor;
+        Button buttonMonitor, optionsButton;
+        TextView textviewRecievedText;
 
         private int prevFileProcessed;
         private int counter;
@@ -32,7 +33,6 @@ namespace SafeWordPearlHacks18
         {
             base.OnCreate(bundle);
 
-            // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
             prevFileProcessed = -1;
@@ -41,6 +41,9 @@ namespace SafeWordPearlHacks18
             counter = 0;
 
             buttonMonitor = FindViewById<Button>(Resource.Id.bMainMonitor);
+            optionsButton = FindViewById<Button>(Resource.Id.bOptions);
+
+            textviewRecievedText = FindViewById<TextView>(Resource.Id.tvTextRecieved);
 
             _recorder = new MediaRecorder();
             _player = new MediaPlayer();
@@ -48,10 +51,12 @@ namespace SafeWordPearlHacks18
             var startTimeSpan = TimeSpan.Zero;
             var periodTimeSpan = TimeSpan.FromSeconds(10);
 
+            bool cancelTimer = false;
+
             buttonMonitor.Click += delegate
             {
                 buttonMonitor.Enabled = false;
-                var timer = new System.Threading.Timer((e) =>
+                System.Threading.Timer timer = new System.Threading.Timer((e) =>
                 {
                     StartRecording(counter);
                     if (counter > 0)
@@ -60,6 +65,12 @@ namespace SafeWordPearlHacks18
                     }
                     counter++;
                 }, null, startTimeSpan, periodTimeSpan);
+            };
+
+            optionsButton.Click += (sender, e) =>
+            {
+                var intent = new Intent(this, typeof(Options));
+                StartActivity(intent);
             };
         }
 
@@ -153,6 +164,9 @@ namespace SafeWordPearlHacks18
                 if (json.results != null)
                 {
                     string statement = json.results[0].alternatives[0].transcript;
+
+                    RunOnUiThread(() => textviewRecievedText.Text = statement);
+
                     if (statement.Contains("test") && isInCall == false)
                     {
                         isInCall = true;

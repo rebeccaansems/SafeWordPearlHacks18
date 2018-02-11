@@ -10,15 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/bMainMonitor" />
-    <Button
-        android:id="@+id/start"
-        android:layout_width="fill_parent"
+    <TextView
+        android:text=""
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start Recording" />
+        android:id="@+id/tvTextRecieved" />
     <Button
-        android:id="@+id/stop"
-        android:layout_width="fill_parent"
+        android:text="Options"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="Stop Recording" />
+        android:id="@+id/bOptions" />
 </LinearLayout>
