@@ -26,6 +26,7 @@ namespace SafeWordPearlHacks18
         Button buttonMonitor;
 
         private int prevFileProcessed;
+        private int counter;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -36,6 +37,8 @@ namespace SafeWordPearlHacks18
 
             prevFileProcessed = -1;
             isInCall = false;
+
+            counter = 0;
 
             buttonMonitor = FindViewById<Button>(Resource.Id.bMainMonitor);
 
@@ -48,16 +51,14 @@ namespace SafeWordPearlHacks18
             buttonMonitor.Click += delegate
             {
                 buttonMonitor.Enabled = false;
-
-                int count = 0;
                 var timer = new System.Threading.Timer((e) =>
                 {
-                    StartRecording(count);
-                    if (count > 0)
+                    StartRecording(counter);
+                    if (counter > 0)
                     {
-                        StopRecording(count);
+                        StopRecording(counter);
                     }
-                    count++;
+                    counter++;
                 }, null, startTimeSpan, periodTimeSpan);
             };
         }
@@ -87,21 +88,23 @@ namespace SafeWordPearlHacks18
 
         private void StopRecording(int count)
         {
-            count -= 1;
             string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            path = Path.Combine(path, "myfile" + count + ".amr");
+            path = Path.Combine(path, "myfile" + (count - 1) + ".amr");
 
             _player.SetDataSource(path);
             _player.Prepare();
             _player.Start();
             _player.Reset();
 
-            TranslateRecording(count);
+            var byteOri = File.ReadAllBytes(path);
+            string bytes = Convert.ToBase64String(byteOri);
+
+            SendSpeech(bytes);
         }
 
         private void TranslateRecording(int count)
         {
-            if (count != prevFileProcessed)
+            //if (count != prevFileProcessed)
             {
                 prevFileProcessed = count;
                 string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
