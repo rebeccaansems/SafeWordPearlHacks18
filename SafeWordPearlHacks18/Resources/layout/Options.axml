@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Distress Command"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOptionsDistress1" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etOptionsDistressCommand1" />
+    <TextView
+        android:text="Distress Phone Number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOptionsDistressNumber1" />
+    <EditText
+        android:inputType="phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etOptionsDistressNumber1" />
+    <CheckBox
+        android:text="Start Phonecall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cbPhone1" />
+    <CheckBox
+        android:text="Send Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cbText1" />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/space1" />
+  
+    <TextView
+        android:text="Distress Command"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOptionsDistress2" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etOptionsDistressCommand1" />
+    <TextView
+        android:text="Distress Phone Number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOptionsDistressPhone2" />
+    <EditText
+        android:inputType="phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etOptionsDistressNumber2" />
+
+  <CheckBox
+      android:text="Start Phonecall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/cbPhone2" />
+  <CheckBox
+      android:text="Send Text"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/cbText2" />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/space2" />
+    <TextView
+        android:text="Elevated Voice Phone Number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOptionsDistress3" />
+    <EditText
+        android:inputType="phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etOptionsDistressNumber3" />
+
+  <CheckBox
+      android:text="Start Phonecall"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/cbPhone3" />
+  <CheckBox
+      android:text="Send Text"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/cbText3" />
+</LinearLayout>
