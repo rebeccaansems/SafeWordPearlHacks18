@@ -25,7 +25,7 @@ namespace SafeWordPearlHacks18
         MediaPlayer _player;
         Button buttonMonitor;
 
-        private int currentFileBeingProcessed = 0;
+        private int prevFileProcessed;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -33,6 +33,9 @@ namespace SafeWordPearlHacks18
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
+
+            prevFileProcessed = -1;
+            isInCall = false;
 
             buttonMonitor = FindViewById<Button>(Resource.Id.bMainMonitor);
 
@@ -91,7 +94,6 @@ namespace SafeWordPearlHacks18
             _player.SetDataSource(path);
             _player.Prepare();
             _player.Start();
-
             _player.Reset();
 
             TranslateRecording(count);
@@ -99,13 +101,17 @@ namespace SafeWordPearlHacks18
 
         private void TranslateRecording(int count)
         {
-            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            path = Path.Combine(path, "myfile" + count + ".amr");
+            if (count != prevFileProcessed)
+            {
+                prevFileProcessed = count;
+                string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                path = Path.Combine(path, "myfile" + count + ".amr");
 
-            var byteOri = File.ReadAllBytes(path);
-            string bytes = Convert.ToBase64String(byteOri);
+                var byteOri = File.ReadAllBytes(path);
+                string bytes = Convert.ToBase64String(byteOri);
 
-            SendSpeech(bytes);
+                SendSpeech(bytes);
+            }
         }
 
         private void SendSpeech(string contents)
@@ -134,18 +140,24 @@ namespace SafeWordPearlHacks18
 
             ToastResponse(oTaskPostAsync, ApplicationContext);
         }
-
+        private bool isInCall;
 
         private async void ToastResponse(Task<HttpResponseMessage> oTaskPostAsync, Context context)
         {
             if (oTaskPostAsync.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 dynamic json = JValue.Parse(await oTaskPostAsync.Result.Content.ReadAsStringAsync());
-                int count = 0;
-            }
-            else
-            {
-                Toast.MakeText(context, "FAILURE: " + (int)oTaskPostAsync.Result.StatusCode, ToastLength.Short).Show();
+                if (json.results != null)
+                {
+                    string statement = json.results[0].alternatives[0].transcript;
+                    if (statement.Contains("test") && isInCall == false)
+                    {
+                        isInCall = true;
+                        var uri = Android.Net.Uri.Parse("tel:9026709064");
+                        var intent = new Intent(Intent.ActionCall, uri);
+                        StartActivity(intent);
+                    }
+                }
             }
         }
     }
