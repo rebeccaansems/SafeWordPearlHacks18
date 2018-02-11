@@ -36,7 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:id="@+id/space1" />
-  
     <TextView
         android:text="Distress Command"
         android:layout_width="match_parent"
@@ -56,17 +55,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etOptionsDistressNumber2" />
-
-  <CheckBox
-      android:text="Start Phonecall"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/cbPhone2" />
-  <CheckBox
-      android:text="Send Text"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/cbText2" />
+    <CheckBox
+        android:text="Start Phonecall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cbPhone2" />
+    <CheckBox
+        android:text="Send Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cbText2" />
     <Space
         android:layout_width="match_parent"
         android:layout_height="20dp"
@@ -81,15 +79,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etOptionsDistressNumber3" />
-
-  <CheckBox
-      android:text="Start Phonecall"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/cbPhone3" />
-  <CheckBox
-      android:text="Send Text"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/cbText3" />
+    <CheckBox
+        android:text="Start Phonecall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cbPhone3" />
+    <CheckBox
+        android:text="Send Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cbText3" />
 </LinearLayout>
