@@ -11,6 +11,8 @@ using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Android.Media;
+using System.IO;
 
 namespace SafeWordPearlHacks18
 {
@@ -19,6 +21,11 @@ namespace SafeWordPearlHacks18
     {
         private const int SpeechResult = 5;
 
+        MediaRecorder _recorder;
+        MediaPlayer _player;
+        Button _start;
+        Button _stop;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -26,6 +33,61 @@ namespace SafeWordPearlHacks18
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
+            _start = FindViewById<Button>(Resource.Id.start);
+            _stop = FindViewById<Button>(Resource.Id.stop);
+
+            MediaRecorder _recorder = new MediaRecorder();
+            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            path = Path.Combine(path, "myfile.amr");
+
+            _start.Click += delegate {
+                _stop.Enabled = !_stop.Enabled;
+                _start.Enabled = !_start.Enabled;
+
+                _recorder.SetAudioSource(AudioSource.Mic);
+                _recorder.SetOutputFormat(OutputFormat.ThreeGpp);
+                _recorder.SetAudioEncoder(AudioEncoder.AmrNb);
+                _recorder.SetOutputFile(path);
+                _recorder.Prepare();
+                _recorder.Start();
+            };
+
+            _stop.Click += delegate {
+                _stop.Enabled = !_stop.Enabled;
+
+                _recorder.Stop();
+                _recorder.Reset();
+
+                _player.SetDataSource(path);
+                _player.Prepare();
+                _player.Start();
+            };
+
+            TranslateRecording();
+            SendSpeech();
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+
+            _recorder = new MediaRecorder();
+            _player = new MediaPlayer();
+
+            _player.Completion += (sender, e) => {
+                _player.Reset();
+                _start.Enabled = !_start.Enabled;
+            };
+
+        }
+
+        private static void TranslateRecording()
+        {
+
+        }
+
+        private void SendSpeech()
+        {
             AudioTranslate audioTranslate = new AudioTranslate
             {
                 audio = new Audio
@@ -45,10 +107,10 @@ namespace SafeWordPearlHacks18
             string json = JsonConvert.SerializeObject(audioTranslate);
 
             HttpClient oHttpClient = new HttpClient();
-            var oTaskPostAsync = oHttpClient.PostAsync(sUrl, new StringContent(json, Encoding.UTF8, sContentType));
-            Toast.MakeText(this.ApplicationContext, "SENT", ToastLength.Long).Show();
+            var oTaskPostAsync = oHttpClient.PostAsync(sUrl, new StringContent(json, System.Text.Encoding.UTF8, sContentType));
+            Toast.MakeText(ApplicationContext, "SENT", ToastLength.Long).Show();
 
-            ToastResponse(oTaskPostAsync, this.ApplicationContext);
+            ToastResponse(oTaskPostAsync, ApplicationContext);
         }
 
 
