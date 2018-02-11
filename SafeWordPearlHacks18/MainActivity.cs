@@ -23,8 +23,9 @@ namespace SafeWordPearlHacks18
 
         MediaRecorder _recorder;
         MediaPlayer _player;
-        Button _start;
-        Button _stop;
+        Button buttonMonitor;
+
+        private int currentFileBeingProcessed = 0;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -33,58 +34,74 @@ namespace SafeWordPearlHacks18
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            _start = FindViewById<Button>(Resource.Id.start);
-            _stop = FindViewById<Button>(Resource.Id.stop);
-
-            MediaRecorder _recorder = new MediaRecorder();
-            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            path = Path.Combine(path, "myfile.amr");
-
-            _start.Click += delegate {
-                _stop.Enabled = !_stop.Enabled;
-                _start.Enabled = !_start.Enabled;
-
-                _recorder.SetAudioSource(AudioSource.Mic);
-                _recorder.SetOutputFormat(OutputFormat.AmrWb);
-                _recorder.SetAudioEncoder(AudioEncoder.AmrWb);
-                _recorder.SetAudioEncodingBitRate(16000);
-                _recorder.SetAudioChannels(1);
-                _recorder.SetOutputFile(path);
-                _recorder.Prepare();
-                _recorder.Start();
-            };
-
-            _stop.Click += delegate {
-                _stop.Enabled = !_stop.Enabled;
-
-                _recorder.Stop();
-                _recorder.Reset();
-
-                _player.SetDataSource(path);
-                _player.Prepare();
-                _player.Start();
-            };
-        }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
+            buttonMonitor = FindViewById<Button>(Resource.Id.bMainMonitor);
 
             _recorder = new MediaRecorder();
             _player = new MediaPlayer();
 
-            _player.Completion += (sender, e) => {
-                _player.Reset();
-                _start.Enabled = !_start.Enabled;
-                TranslateRecording();
-            };
+            var startTimeSpan = TimeSpan.Zero;
+            var periodTimeSpan = TimeSpan.FromSeconds(10);
 
+            buttonMonitor.Click += delegate
+            {
+                buttonMonitor.Enabled = false;
+
+                int count = 0;
+                var timer = new System.Threading.Timer((e) =>
+                {
+                    StartRecording(count);
+                    if (count > 0)
+                    {
+                        StopRecording(count);
+                    }
+                    count++;
+                }, null, startTimeSpan, periodTimeSpan);
+            };
         }
 
-        private void TranslateRecording()
+        private void StartRecording(int count)
         {
             string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            path = Path.Combine(path, "myfile.amr");
+            path = Path.Combine(path, "myfile" + count + ".amr");
+
+            if (count > 0)
+            {
+                _recorder.Stop();
+                _recorder.Reset();
+            }
+
+            _recorder.SetOutputFile(path);
+
+            _recorder.SetAudioSource(AudioSource.Mic);
+            _recorder.SetOutputFormat(OutputFormat.AmrWb);
+            _recorder.SetAudioEncoder(AudioEncoder.AmrWb);
+            _recorder.SetAudioEncodingBitRate(16000);
+            _recorder.SetAudioChannels(1);
+
+            _recorder.Prepare();
+            _recorder.Start();
+        }
+
+        private void StopRecording(int count)
+        {
+            count -= 1;
+            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            path = Path.Combine(path, "myfile" + count + ".amr");
+
+            _player.SetDataSource(path);
+            _player.Prepare();
+            _player.Start();
+
+            _player.Reset();
+
+            TranslateRecording(count);
+        }
+
+        private void TranslateRecording(int count)
+        {
+            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            path = Path.Combine(path, "myfile" + count + ".amr");
+
             var byteOri = File.ReadAllBytes(path);
             string bytes = Convert.ToBase64String(byteOri);
 
@@ -114,23 +131,21 @@ namespace SafeWordPearlHacks18
 
             HttpClient oHttpClient = new HttpClient();
             var oTaskPostAsync = oHttpClient.PostAsync(sUrl, new StringContent(json, System.Text.Encoding.UTF8, sContentType));
-            Toast.MakeText(ApplicationContext, "SENT", ToastLength.Long).Show();
 
             ToastResponse(oTaskPostAsync, ApplicationContext);
         }
 
 
-        private static async void ToastResponse(Task<HttpResponseMessage> oTaskPostAsync, Context context)
+        private async void ToastResponse(Task<HttpResponseMessage> oTaskPostAsync, Context context)
         {
             if (oTaskPostAsync.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 dynamic json = JValue.Parse(await oTaskPostAsync.Result.Content.ReadAsStringAsync());
-                Toast.MakeText(context, "RESPONSE " + json.results[0].alternatives[0].transcript, ToastLength.Long).Show();
-
+                int count = 0;
             }
             else
             {
-                Toast.MakeText(context, "FAILURE: " + (int)oTaskPostAsync.Result.StatusCode, ToastLength.Long).Show();
+                Toast.MakeText(context, "FAILURE: " + (int)oTaskPostAsync.Result.StatusCode, ToastLength.Short).Show();
             }
         }
     }
